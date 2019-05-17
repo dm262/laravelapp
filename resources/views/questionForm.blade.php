@@ -2,27 +2,58 @@
 
 @section('content')
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
+        <div class="row ">
+            <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">Create Question</div>
+                    <div class="card-header">Question</div>
+
                     <div class="card-body">
-                        @if($edit === FALSE)
-                        {!! Form::model($question, ['action' => 'QuestionController@store']) !!}
-                        @else()
-                            {!! Form::model($question, ['route' => ['questions.update', $question->id], 'method' => 'patch']) !!}
-                        @endif
-                        <div class="form-group">
-                            {!! Form::label('body', 'Body') !!}
-                            {!! Form::text('body', $question->body, ['class' => 'form-control','required' => 'required']) !!}
-                        </div>
-                        <button class="btn btn-success float-right" value="submit" type="submit" id="submit">Save
+
+                        {{$question->body}}
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-primary float-right"
+                           href="{{route('questions.edit', ['id'=>$question->id])}}">
+                            Edit Question
+                        </a>
+                        {{ Form::open(['method'  => 'DELETE', 'route' => ['questions.destroy', $question->id]])}}
+                        <button class="btn btn-danger float-right mr-2" value="submit" type="submit" id="submit">Delete
                         </button>
                         {!! Form::close() !!}
                     </div>
-
                 </div>
             </div>
-        </div>
-    </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header"><a class="btn btn-primary float-left"
+                                                href="{{ route('answers.create', ['question_id'=> $question->id])}}">
+                            Answer Question
+                        </a></div>
+
+                    <div class="card-body">
+                        @forelse($question->answers as $answer)
+                            <div class="card">
+                                Replies: {{ $answer->reply()->count() }}
+                                <div class="card-body">{{$answer->body}}</div>
+                                <div class="card-footer">
+
+                                    <a class="btn btn-primary float-right"
+                                       href="{{ route('answers.show', ['question_id'=> $question->id,'answer_id' => $answer->id]) }}">
+                                        View
+                                    </a>
+
+                                </div>
+                            </div>
+                        @empty
+                            <div class="card">
+
+                                <div class="card-body"> No Answers available </div>
+                            </div>
+                        @endforelse
+
+
+                    </div>
+                </div>
+            </div>
 @endsection
